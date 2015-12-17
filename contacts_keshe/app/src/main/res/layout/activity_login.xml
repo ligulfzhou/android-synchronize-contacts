@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/ic_launcher"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="课程设计"
+        android:id="@+id/tv_keshe"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"/>
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:hint="手机号"
+        android:id="@+id/et_mobile"
+        android:layout_below="@+id/tv_keshe"
+        android:layout_alignParentRight="true"
+        android:textSize="15dp"
+        android:textColor="#000000"/>
+    <Button
+        android:layout_width="170dp"
+        android:layout_height="40dp"
+        android:text="登陆"
+        android:id="@+id/btn_login"
+        android:textSize="13dp"
+        android:textColor="#000000"
+        android:layout_alignTop="@+id/btn_register"
+        android:layout_alignParentRight="true"/>
+    <Button
+        android:layout_width="220dp"
+        android:layout_height="40dp"
+        android:text="注册"
+        android:id="@+id/btn_register"
+        android:layout_below="@+id/et_password"
+        android:layout_marginTop="10dp"
+        android:textSize="13dp"
+        android:textColor="#000000"
+        android:layout_toLeftOf="@+id/btn_login"/>
+    <!--<TextView-->
+        <!--android:id="@+id/loginErrorMsg"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="56dp"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_below="@+id/passres"-->
+        <!--android:textColor="#000000" />-->
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/et_mobile"
+        android:layout_toLeftOf="@+id/tv_keshe"
+        android:text="手机号"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@+id/et_mobile"
+        android:layout_below="@+id/et_mobile"
+        android:ems="10"
+        android:hint="密码"
+        android:inputType="textPassword"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+    <TextView
+        android:id="@+id/pworda"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/et_password"
+        android:layout_alignRight="@+id/textView2"
+        android:text="密码: "
+        android:textColor="#000000"
+        android:textSize="15dp" />
+    <!--<Button-->
+        <!--android:id="@+id/passres"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_below="@+id/login"-->
+        <!--android:text="Forgot Password"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textSize="13dp" />-->
+</RelativeLayout>
