@@ -1,5 +1,7 @@
 import json
 import base64
+import logging
+import logging.config
 from flask import Flask, jsonify, g, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.httpauth import HTTPBasicAuth
@@ -11,6 +13,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +23,8 @@ class User(db.Model):
     password = db.Column(db.String)
     contacts = db.relationship('Contact', backref='user', lazy='dynamic')
 
-    def __init__(self, username, password):
+    def __init__(self, mobile, username, password):
+        self.mobile = mobile
         self.username = username
         self.password = password
 
@@ -68,21 +73,23 @@ def not_found(error):
 
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form.get('username', '')
+    mobile = request.form.get('mobile', '')
     password = request.form.get('password', '')
-    if not username or not password:
-        return make_response({'login': 'failed'})
-    user = User.query.filter_by(username=username).first()
-    print(user)
-    if user and password == user.password:
-        user_data = {
-            'mobile': user.mobile,
-            'username': user.username,
-            'token': base64.encodestring('%s:%s' % (username, password))
-        }
-        return make_response(jsonify({'user': user_data}))
-    else:
+    if not mobile or not password:
         return make_response(jsonify({'login': 'failed'}))
+    try:
+        user = User.query.filter_by(username=username).first()
+        if user and password == user.password:
+            user_data = {
+                'mobile': user.mobile,
+                'username': user.username,
+                'token': base64.encodestring('%s:%s' % (mobile, password))
+            }
+            return make_response(jsonify({'user': user_data}))
+        else:
+            return make_response(jsonify({'login': 'failed'}))
+    except Exception as e:
+        logger.error(e)
 
 
 @app.route('/register', methods=['POST'])
@@ -92,10 +99,13 @@ def register():
     password = request.form.get('password', '')
     if not username or not password:
         return make_response(jsonify({'register': 'failed'}))
-    user = User(mobile=mobile, username=username, password=password)
-    db.session.add(user)
-    db.session.commit()
-    return make_response(jsonify({'register': 'success'}))
+    try:
+        user = User(mobile=mobile, username=username, password=password)
+        db.session.add(user)
+        db.session.commit()
+        return make_response(jsonify({'register': 'success'}))
+    except Exception as e:
+        logger.error(e)
 
 
 @app.route('/change_password', methods=['POST'])
@@ -104,25 +114,31 @@ def change_password():
     password = request.form.get('password', '')
     if not password:
         return make_response({'change_password': 'failed'})
-    user = User.query.filter_by(username=g.current_user['username']).first()
-    user.password = password
-    db.session.add(user)
-    db.session.commit()
-    return make_response({'change_password': 'success'})
+    try:
+        user = User.query.filter_by(username=g.current_user['username']).first()
+        user.password = password
+        db.session.add(user)
+        db.session.commit()
+        return make_response({'change_password': 'success'})
+    except Exception as e:
+        logger.error(e)
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
 @auth.login_required
 def get_contact():
     if request.method == 'GET':
-        contacts = Contact.query.filter_by(user=g.current_user).all()
-        contacts_data = [{
-            'id': x.id,
-            'name': x.name,
-            'emails': x.emails,
-            'numbers': x.numbers
-        } for x in contacts]
-        return make_response(jsonify({'contacts': contacts_data}))
+        try:
+            contacts = Contact.query.filter_by(user=g.current_user).all()
+            contacts_data = [{
+                'id': x.id,
+                'name': x.name,
+                'emails': x.emails,
+                'numbers': x.numbers
+            } for x in contacts]
+            return make_response(jsonify({'contacts': contacts_data}))
+        except Exception as e:
+            logger.error(e)
     else:
         # contacts = request.get_json('contacts')
         # if not contacts:
@@ -140,11 +156,12 @@ def delete_contacts():
     try:
         Contact.query.filter(Contact.id.in_(id_list)).delete()
         db.session.commit()
-    except:
+    except Exception as e:
         db.session.roll_back()
+        logger.error(e)
     return make_response(jsonify({'delete contacts': 'success'}))
 
 
 if __name__ == '__main__':
     db.create_all()
-    app.run(port=9090, debug=True)
+    app.run(host='0.0.0.0', port=8001, debug=True)
