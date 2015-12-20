@@ -7,6 +7,7 @@ import android.content.SharedPreferences.Editor;
 public class SharedPreference {
     public static final String PREFS_NAME = "AOP_PREFS";
     public static final String IS_LOGGEDIN = "IS_LOGGEDIN";
+    public static final String MOBILE = "MOBILE";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String TOKEN = "TOKEN";
@@ -26,6 +27,15 @@ public class SharedPreference {
 
     public void logOut(Context context) {
         saveInt(context, IS_LOGGEDIN, 0);
+    }
+
+    public String getMobile(Context context) {
+        String mobile = getStringValue(context, MOBILE);
+        return mobile;
+    }
+
+    public void setMobile(Context context, String mobile) {
+        saveString(context, MOBILE, mobile);
     }
 
     public String getUserName(Context context) {

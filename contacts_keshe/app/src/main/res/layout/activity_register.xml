@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <!--android:background="@drawable/android"-->
+    <TextView
+        android:id="@+id/tv_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:text="注册页面"
+        android:textColor="#000000" />
+    <TextView
+        android:id="@+id/tv_mobile"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@+id/tv_register"
+        android:text="手机号"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <EditText
+        android:id="@+id/et_mobile"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tv_mobile"
+        android:hint="手机号"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+
+    <TextView
+        android:id="@+id/tv_username"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:layout_alignRight="@+id/tv_mobile"
+        android:layout_below="@+id/tv_mobile"
+        android:text="用户名"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <EditText
+        android:id="@+id/et_username"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/et_mobile"
+        android:ems="10"
+        android:hint="用户名"
+        android:inputType="textEmailAddress"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+
+
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:textColor="#000000"
+        android:text="密码"
+        android:id="@+id/tv_password"
+        android:layout_below="@+id/tv_username"
+        android:layout_alignRight="@+id/tv_username"
+        android:textSize="15dp"/>
+
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="40dp" android:textColor="#000000"
+        android:id="@+id/et_password"
+        android:hint="密码"
+        android:layout_alignTop="@+id/tv_password"
+        android:layout_alignParentRight="true"
+        android:textSize="15dp"/>
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignRight="@+id/tv_mobile"
+        android:layout_below="@+id/tv_password"
+        android:text="注册"
+        android:textColor="#000000"
+        android:textSize="13dp" />
+
+    <Button
+        android:id="@+id/btn_back2LoginPage"
+        android:layout_width="175dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/et_password"
+        android:text="返回登陆页面"
+        android:textColor="#000000"
+        android:textSize="13dp" />
+</RelativeLayout>
