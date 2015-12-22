@@ -12,8 +12,16 @@ public class SharedPreference {
     public static final String PASSWORD = "PASSWORD";
     public static final String TOKEN = "TOKEN";
 
-    public SharedPreference() {
-        super();
+    private static SharedPreference instance = null;
+
+    private SharedPreference() {
+    }
+
+    public static SharedPreference getInstance() {
+        if (instance == null) {
+            instance = new SharedPreference();
+        }
+        return instance;
     }
 
     public int isLoggedIn(Context context) {
@@ -99,7 +107,7 @@ public class SharedPreference {
         SharedPreferences settings;
         String text;
 
-        settings = context.getSharedPreferences(key, Context.MODE_PRIVATE);
+        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         text = settings.getString(key, null);
         return text;
     }

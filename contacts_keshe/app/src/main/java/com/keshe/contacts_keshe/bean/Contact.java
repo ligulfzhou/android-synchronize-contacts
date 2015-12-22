@@ -1,61 +1,60 @@
 package com.keshe.contacts_keshe.bean;
 
-import java.util.ArrayList;
-
 public class Contact {
 	public String id;
 	public String name;
-	public ArrayList<ContactEmail> emails;
-	public ArrayList<ContactPhone> numbers;
+//	public String email;
+	public String number;
 
 	public Contact(String id, String name) {
 		this.id = id;
 		this.name = name;
-		this.emails = new ArrayList<ContactEmail>();
-		this.numbers = new ArrayList<ContactPhone>();
+	}
+
+
+	//	public Contact(String id, String name, String email, String number) {
+	public Contact(String id, String name, String number) {
+		this.id = id;
+		this.name = name;
+//		this.email = email;
+		this.number = number;
 	}
 
 	@Override
 	public String toString() {
-		String result = name;
-		if (numbers.size() > 0) {
-			ContactPhone number = numbers.get(0);
-			result += " (" + number.number + " - " + number.type + ")";
-		}
-		if (emails.size() > 0) {
-			ContactEmail email = emails.get(0);
-			result += " [" + email.address + " - " + email.type + "]";
-		}
-		return result;
+//		return "name: " + name + "mobile: " + number + "email: " + email;
+		return name + "," + number;
 	}
 
-	public void addEmail(String address, String type) {
-		emails.add(new ContactEmail(address, type));
+	public String getId() {
+		return id;
 	}
 
-	public void addNumber(String number, String type) {
-		numbers.add(new ContactPhone(number, type));
+	public void setId(String id) {
+		this.id = id;
 	}
 
-
-	public class ContactPhone {
-		public String number;
-		public String type;
-
-		public ContactPhone(String number, String type) {
-			this.number = number;
-			this.type = type;
-		}
+	public String getName() {
+		return name;
 	}
 
-	public class ContactEmail {
-		public String address;
-		public String type;
-
-		public ContactEmail(String address, String type) {
-			this.address = address;
-			this.type = type;
-		}
+	public void setName(String name) {
+		this.name = name;
 	}
 
+//	public String getEmail() {
+//		return email;
+//	}
+//
+//	public void setEmail(String email) {
+//		this.email = email;
+//	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
 }

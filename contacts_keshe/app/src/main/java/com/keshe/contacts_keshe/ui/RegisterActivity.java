@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.keshe.contacts_keshe.R;
@@ -27,7 +26,7 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        sharedPreference = new SharedPreference();
+        sharedPreference = SharedPreference.getInstance();
 
         et_mobile = (EditText) findViewById(R.id.et_mobile);
         et_username = (EditText) findViewById(R.id.et_username);

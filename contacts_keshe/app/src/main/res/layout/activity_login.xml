@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
-    <!--android:background="@drawable/ic_launcher"-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,14 +76,4 @@
         android:text="密码: "
         android:textColor="#000000"
         android:textSize="15dp" />
-    <!--<Button-->
-        <!--android:id="@+id/passres"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="40dp"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_below="@+id/login"-->
-        <!--android:text="Forgot Password"-->
-        <!--android:textColor="#000000"-->
-        <!--android:textSize="13dp" />-->
 </RelativeLayout>

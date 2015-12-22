@@ -3,7 +3,6 @@ package com.keshe.contacts_keshe.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.v4.content.CursorLoader;
 
@@ -56,7 +55,7 @@ public class ContactFetcher {
         c.close();
 
         matchContactNumbers(contactsMap);
-        matchContactEmails(contactsMap);
+//        matchContactEmails(contactsMap);
 
         return listContacts;
     }
@@ -78,7 +77,7 @@ public class ContactFetcher {
 
         if (phone.moveToFirst()) {
             final int contactNumberColumnIndex = phone.getColumnIndex(Phone.NUMBER);
-            final int contactTypeColumnIndex = phone.getColumnIndex(Phone.TYPE);
+//            final int contactTypeColumnIndex = phone.getColumnIndex(Phone.TYPE);
             final int contactIdColumnIndex = phone.getColumnIndex(Phone.CONTACT_ID);
 
             while (!phone.isAfterLast()) {
@@ -88,10 +87,12 @@ public class ContactFetcher {
                 if (contact == null) {
                     continue;
                 }
-                final int type = phone.getInt(contactTypeColumnIndex);
-                String customLabel = "Custom";
-                CharSequence phoneType = ContactsContract.CommonDataKinds.Phone.getTypeLabel(context.getResources(), type, customLabel);
-                contact.addNumber(number, phoneType.toString());
+//                final int type = phone.getInt(contactTypeColumnIndex);
+//                String customLabel = "Custom";
+//                CharSequence phoneType = ContactsContract.CommonDataKinds.Phone.getTypeLabel(context.getResources(), type, customLabel);
+
+                contact.setNumber(number);
+//                contact.addNumber(number, phoneType.toString());
                 phone.moveToNext();
             }
         }
@@ -99,41 +100,41 @@ public class ContactFetcher {
         phone.close();
     }
 
-    public void matchContactEmails(Map<String, Contact> contactsMap) {
-        // Get email
-        final String[] emailProjection = new String[]{
-                Email.DATA,
-                Email.TYPE,
-                Email.CONTACT_ID,
-        };
-
-        Cursor email = new CursorLoader(context,
-                Email.CONTENT_URI,
-                emailProjection,
-                null,
-                null,
-                null).loadInBackground();
-
-        if (email.moveToFirst()) {
-            final int contactEmailColumnIndex = email.getColumnIndex(Email.DATA);
-            final int contactTypeColumnIndex = email.getColumnIndex(Email.TYPE);
-            final int contactIdColumnsIndex = email.getColumnIndex(Email.CONTACT_ID);
-
-            while (!email.isAfterLast()) {
-                final String address = email.getString(contactEmailColumnIndex);
-                final String contactId = email.getString(contactIdColumnsIndex);
-                final int type = email.getInt(contactTypeColumnIndex);
-                String customLabel = "Custom";
-                Contact contact = contactsMap.get(contactId);
-                if (contact == null) {
-                    continue;
-                }
-                CharSequence emailType = ContactsContract.CommonDataKinds.Email.getTypeLabel(context.getResources(), type, customLabel);
-                contact.addEmail(address, emailType.toString());
-                email.moveToNext();
-            }
-        }
-
-        email.close();
-    }
+//    public void matchContactEmails(Map<String, Contact> contactsMap) {
+//        // Get email
+//        final String[] emailProjection = new String[]{
+//                Email.DATA,
+//                Email.TYPE,
+//                Email.CONTACT_ID,
+//        };
+//
+//        Cursor email = new CursorLoader(context,
+//                Email.CONTENT_URI,
+//                emailProjection,
+//                null,
+//                null,
+//                null).loadInBackground();
+//
+//        if (email.moveToFirst()) {
+//            final int contactEmailColumnIndex = email.getColumnIndex(Email.DATA);
+//            final int contactTypeColumnIndex = email.getColumnIndex(Email.TYPE);
+//            final int contactIdColumnsIndex = email.getColumnIndex(Email.CONTACT_ID);
+//
+//            while (!email.isAfterLast()) {
+//                final String address = email.getString(contactEmailColumnIndex);
+//                final String contactId = email.getString(contactIdColumnsIndex);
+//                final int type = email.getInt(contactTypeColumnIndex);
+//                String customLabel = "Custom";
+//                Contact contact = contactsMap.get(contactId);
+//                if (contact == null) {
+//                    continue;
+//                }
+//                CharSequence emailType = ContactsContract.CommonDataKinds.Email.getTypeLabel(context.getResources(), type, customLabel);
+//                contact.addEmail(address, emailType.toString());
+//                email.moveToNext();
+//            }
+//        }
+//
+//        email.close();
+//    }
 }

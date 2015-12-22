@@ -1,7 +1,5 @@
-import json
 import base64
 import logging
-import logging.config
 from flask import Flask, jsonify, g, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.httpauth import HTTPBasicAuth
@@ -13,8 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-logging.config.fileConfig('logging.conf')
-logger = logging.getLogger('root')
+logging.basicConfig(filename='log.log', level=logging.DEBUG)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,14 +33,14 @@ class User(db.Model):
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    emails = db.Column(db.String)
-    numbers = db.Column(db.String)
+    number = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, name, emails, numbers):
+    def __init__(self, name, number, user=None):
         self.name = name
-        self.emails = emails
-        self.numbers = numbers
+        self.number = number
+        if user:
+            self.user = user
 
 
 @auth.verify_password
@@ -52,7 +50,6 @@ def verify_passwd(mobile, password2):
         g.current_user = user
         return True
     else:
-        g.current_user = None
         return False
 
 
@@ -78,7 +75,7 @@ def login():
     if not mobile or not password:
         return make_response(jsonify({'login': 'failed'}))
     try:
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(mobile=mobile).first()
         if user and password == user.password:
             user_data = {
                 'mobile': user.mobile,
@@ -89,7 +86,7 @@ def login():
         else:
             return make_response(jsonify({'login': 'failed'}))
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
 
 
 @app.route('/register', methods=['POST'])
@@ -105,7 +102,7 @@ def register():
         db.session.commit()
         return make_response(jsonify({'register': 'success'}))
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
 
 
 @app.route('/change_password', methods=['POST'])
@@ -113,15 +110,16 @@ def register():
 def change_password():
     password = request.form.get('password', '')
     if not password:
-        return make_response({'change_password': 'failed'})
+        return make_response(jsonify({'change_password': 'failed'}))
     try:
-        user = User.query.filter_by(username=g.current_user['username']).first()
+        user = User.query.filter_by(username=g.current_user.username).first()
         user.password = password
         db.session.add(user)
         db.session.commit()
-        return make_response({'change_password': 'success'})
+        return make_response(jsonify({'change_password': 'success'}))
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
+        return make_response(jsonify({'change_password': 'failed'}))
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
@@ -133,17 +131,36 @@ def get_contact():
             contacts_data = [{
                 'id': x.id,
                 'name': x.name,
-                'emails': x.emails,
-                'numbers': x.numbers
+                'number': x.number
             } for x in contacts]
             return make_response(jsonify({'contacts': contacts_data}))
         except Exception as e:
-            logger.error(e)
+            logging.error(e)
     else:
-        # contacts = request.get_json('contacts')
-        # if not contacts:
-        #     return make_response(jsonify({'upload contacts': 'failed'}))
-        pass
+        contacts = request.form.get('contacts')
+        if not contacts:
+            return make_response(jsonify({'upload contacts': 'failed'}))
+        contacts_former = Contact.query.filter_by(user=g.current_user).all()
+        contacts_dict = {}
+        for contact in contacts_former:
+            contacts_dict.update({contact.name: contact.number})
+        contacts_upload = contacts.split(';')
+        contacts_upload_dict = {}
+        for contact in contacts_upload:
+            name, number = contact.split(',')
+            contacts_upload_dict.update({name: number})
+
+        contacts_to_insert = []
+        for contact in contacts_upload_dict:
+            if contact in contacts_dict and contacts_upload_dict.get(contact) == contacts_dict.get(contact):
+                continue
+            else:
+                contacts_to_insert.append(Contact(name=contact, number=contacts_upload_dict.get(contact), user=g.current_user))
+
+        for contact in contacts_to_insert:
+            db.session.add(contact)
+        db.session.commit()
+        return make_response(jsonify({'upload': 'success'}))
 
 
 @app.route('/delete_contacts', methods=['POST'])
@@ -158,7 +175,7 @@ def delete_contacts():
         db.session.commit()
     except Exception as e:
         db.session.roll_back()
-        logger.error(e)
+        logging.error(e)
     return make_response(jsonify({'delete contacts': 'success'}))
 
 

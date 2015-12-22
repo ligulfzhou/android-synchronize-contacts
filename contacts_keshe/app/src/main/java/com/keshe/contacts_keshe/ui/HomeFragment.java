@@ -2,6 +2,7 @@ package com.keshe.contacts_keshe.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -11,94 +12,117 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.keshe.contacts_keshe.R;
-import com.keshe.contacts_keshe.adapter.ListViewAdapter;
-import com.keshe.contacts_keshe.bean.WorldPopulation;
+import com.keshe.contacts_keshe.adapter.ContactsAdapter;
+import com.keshe.contacts_keshe.api.Api;
+import com.keshe.contacts_keshe.bean.Contact;
+import com.keshe.contacts_keshe.util.ContactFetcher;
+import com.keshe.contacts_keshe.util.SharedPreference;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-    ListView list;
-    ListViewAdapter listviewadapter;
-    List<WorldPopulation> worldpopulationlist = new ArrayList<WorldPopulation>();
-    String[] rank;
-    String[] country;
-    String[] population;
-    int[] flag;
+    ArrayList<Contact> listContacts;
+    ListView listView;
+    ContactsAdapter contactsAdapter;
+
+    SharedPreference sharedPreference;
+    int isLoggedin = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreference = SharedPreference.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        rank = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        listContacts = new ContactFetcher(getActivity().getBaseContext()).fetchAll();
 
-        country = new String[]{"China", "India", "United States",
-                "Indonesia", "Brazil", "Pakistan", "Nigeria", "Bangladesh",
-                "Russia", "Japan"};
+        Log.d("listcontacts", listContacts.toString());
 
-        population = new String[]{"1,354,040,000", "1,210,193,422",
-                "315,761,000", "237,641,326", "193,946,886", "182,912,000",
-                "170,901,000", "152,518,015", "143,369,806", "127,360,000"};
+        listView = (ListView) view.findViewById(R.id.listview_contacts);
+        contactsAdapter = new ContactsAdapter(getActivity().getBaseContext(), R.id.listview_contacts, listContacts);
+        listView.setAdapter(contactsAdapter);
 
-        flag = new int[]{R.drawable.china, R.drawable.india,
-                R.drawable.unitedstates, R.drawable.indonesia,
-                R.drawable.brazil, R.drawable.pakistan, R.drawable.nigeria,
-                R.drawable.bangladesh, R.drawable.russia, R.drawable.japan};
-
-        for (int i = 0; i < rank.length; i++) {
-            WorldPopulation worldpopulation = new WorldPopulation(flag[i],
-                    rank[i], country[i], population[i]);
-            worldpopulationlist.add(worldpopulation);
-        }
-
-        // Locate the ListView in listview_main.xml
-        list = (ListView) view.findViewById(R.id.listview);
-
-        // Pass results to ListViewAdapter Class
-        listviewadapter = new ListViewAdapter(getActivity().getBaseContext(), R.layout.listview_item, worldpopulationlist);
-
-        // Binds the Adapter to the ListView
-        list.setAdapter(listviewadapter);
-        list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        // Capture ListView item click
-        list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode,
                                                   int position, long id, boolean checked) {
-                // Capture total checked items
-                final int checkedCount = list.getCheckedItemCount();
-                // Set the CAB title according to total checked items
-                mode.setTitle(checkedCount + " Selected");
+                final int checkedCount = listView.getCheckedItemCount();
+                mode.setTitle("选中" + checkedCount + "个");
                 // Calls toggleSelection method from ListViewAdapter Class
-                listviewadapter.toggleSelection(position);
+                contactsAdapter.toggleSelection(position);
             }
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.delete:
+                    case R.id.upload:
                         // Calls getSelectedIds method from ListViewAdapter Class
-                        SparseBooleanArray selected = listviewadapter
+                        SparseBooleanArray selected = contactsAdapter
                                 .getSelectedIds();
                         // Captures all selected ids with a loop
+
+//                        for (int i = (selected.size() - 1); i >= 0; i--) {
+//                            if (selected.valueAt(i)) {
+//                                Contact selecteditem = contactsAdapter.getItem(selected.keyAt(i));
+//                                // Remove selected items following the ids
+//                                contactsAdapter.remove(selecteditem);
+//                            }
+//                        }
+
+                        List<String> contacts = new ArrayList<String>();
+
                         for (int i = (selected.size() - 1); i >= 0; i--) {
                             if (selected.valueAt(i)) {
-                                WorldPopulation selecteditem = listviewadapter
-                                        .getItem(selected.keyAt(i));
-                                // Remove selected items following the ids
-                                listviewadapter.remove(selecteditem);
+                                Contact selecteditem = contactsAdapter.getItem(selected.keyAt(i));
+                                contacts.add(selecteditem.toString());
                             }
                         }
+                        String token = sharedPreference.getToken(getActivity().getBaseContext());
+                        Api.postContactList(contacts, token, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                String str = new String(responseBody);
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(str);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Toast.makeText(getActivity().getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                String str = new String(responseBody);
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(str);
+                                    Toast.makeText(getActivity().getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Toast.makeText(getActivity().getBaseContext(), ".........", Toast.LENGTH_LONG).show();
+
+
+                            }
+                        });
                         // Close CAB
                         mode.finish();
                         return true;
@@ -116,7 +140,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 // TODO Auto-generated method stub
-                listviewadapter.removeSelection();
+                contactsAdapter.removeSelection();
             }
 
             @Override

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -7,20 +7,47 @@
         android:id="@+id/tv_mobile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="50dp"
+        android:textSize="20dp"
         android:text="手机号"/>
+    <TextView
+        android:id="@+id/tv_mymobile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:textSize="20dp"
+        android:text="18612345678" />
     <TextView
         android:id="@+id/tv_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_mobile"
+        android:layout_marginLeft="50dp"
+        android:textSize="20dp"
         android:text="用户名"/>
+    <TextView
+        android:id="@+id/tv_myusername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_mymobile"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:textSize="20dp"
+        android:text="my username"/>
     <Button
         android:id="@+id/btn_change_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_username"
+        android:layout_marginLeft="150dp"
         android:text="修改密码"/>
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_change_password"
+        android:layout_marginLeft="165dp"
         android:text="退出"/>
-</LinearLayout>
+</RelativeLayout>

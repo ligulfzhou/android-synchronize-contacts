@@ -3,7 +3,6 @@ package com.keshe.contacts_keshe.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +27,8 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        sharedPreference = new SharedPreference();
+
+        sharedPreference = SharedPreference.getInstance();;
     }
 
     @Override
@@ -38,11 +38,11 @@ public class LoginActivity extends Activity {
         et_password = (EditText) findViewById(R.id.et_password);
 
         String mobile = sharedPreference.getMobile(getBaseContext());
-        if (mobile != null && !mobile.equals("")){
+        if (mobile != null && !mobile.equals("")) {
             et_mobile.setText(mobile);
         }
         String password = sharedPreference.getPassword(getBaseContext());
-        if(password != null && !password.equals("")){
+        if (password != null && !password.equals("")) {
             et_password.setText(password);
         }
 
@@ -51,35 +51,36 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String mobile = et_mobile.getText().toString();
-                String password = et_password.getText().toString();
+                final String password = et_password.getText().toString();
 
-                if (!mobile.equals("")  && !password.equals("")){
+                if (!mobile.equals("") && !password.equals("")) {
 //                    Toast.makeText(getBaseContext(), mobile + " " + password, Toast.LENGTH_LONG).show();
 
                     Api.login(mobile, password, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            JSONObject jsonObject = null;
-                            JSONObject json_user = null;
+                            String str = new String(responseBody);
+                            JSONObject jsonObject = null, jsonObject1 = null;
                             try {
-                                jsonObject= new JSONObject(responseBody.toString());
+                                jsonObject = new JSONObject(str);
+                                jsonObject1 = jsonObject.getJSONObject("user");
 
-//                                Log.d("userinfo", jsonObject.toString());
-//                                json_user = jsonObject.getJSONObject("user");
-//                                Log.d("json_user", json_user.toString());
-//                                Toast.makeText(getBaseContext(), json_user.toString(), Toast.LENGTH_LONG).show();
+                                sharedPreference.setMobile(getBaseContext(), jsonObject1.get("mobile").toString());
+                                sharedPreference.setUserName(getBaseContext(), jsonObject1.get("username").toString());
+                                sharedPreference.setPassword(getBaseContext(), password);
+                                sharedPreference.setToken(getBaseContext(), jsonObject1.get("token").toString());
+
+                                sharedPreference.logIn(getBaseContext());
+
+                                Toast.makeText(getBaseContext(), "登陆成功", Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                startActivity(intent);
                             } catch (JSONException e) {
-                                Toast.makeText(getBaseContext(), "zhuanhuan", Toast.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
-//                            String token = null;
-//                            try {
-//                                token = jsonObject.getString("username");
-//                                Toast.makeText(getBaseContext(), "huoqu", Toast.LENGTH_LONG).show();
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                            Toast.makeText(getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(getBaseContext(), str, Toast.LENGTH_LONG).show();
                         }
 
                         @Override
@@ -87,7 +88,7 @@ public class LoginActivity extends Activity {
                             Toast.makeText(getBaseContext(), "..........", Toast.LENGTH_LONG).show();
                         }
                     });
-                }else{
+                } else {
                     Toast.makeText(getBaseContext(), "请填写手机号和密码", Toast.LENGTH_LONG).show();
                 }
             }
