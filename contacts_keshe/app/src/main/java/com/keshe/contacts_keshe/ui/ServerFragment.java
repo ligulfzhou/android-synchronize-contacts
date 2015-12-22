@@ -2,24 +2,16 @@ package com.keshe.contacts_keshe.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.keshe.contacts_keshe.R;
 import com.keshe.contacts_keshe.adapter.ContactsAdapter;
 import com.keshe.contacts_keshe.api.Api;
 import com.keshe.contacts_keshe.bean.Contact;
-import com.keshe.contacts_keshe.util.ContactFetcher;
 
 import java.util.ArrayList;
 
@@ -54,7 +46,7 @@ public class ServerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         int isLoggedIn = sharedPreference.isLoggedIn(getActivity().getBaseContext());
-        View view;
+        final View view;
         if (isLoggedIn == 0) {
             view = inflater.inflate(R.layout.not_logged_in, container, false);
             Button btn_login = (Button) view.findViewById(R.id.btn_login);
@@ -81,12 +73,15 @@ public class ServerFragment extends Fragment {
                         JSONArray jsonArray = jsonObject.getJSONArray("contacts");
                         for (int i = 0; i < jsonArray.length(); i++){
                             temp = jsonArray.getJSONObject(i);
-                            listContacts.add(new Contact(temp.getString("name"), temp.getString("number")));
+//                            Log.d("contact: ", temp.getString("name") + temp.getString("number"));
+                            listContacts.add(new Contact("id", temp.getString("name"), temp.getString("number")));
                         }
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    listView = (ListView) view.findViewById(R.id.listview_contacts);
+                    contactsAdapter = new ContactsAdapter(getActivity().getBaseContext(), R.id.listview_contacts, listContacts);
+                    listView.setAdapter(contactsAdapter);
                 }
 
                 @Override
@@ -94,14 +89,6 @@ public class ServerFragment extends Fragment {
 
                 }
             });
-
-
-//            listContacts = new ContactFetcher(getActivity().getBaseContext()).fetchAll();
-//            listContacts = new ArrayList<Contact>();
-
-            listView = (ListView) view.findViewById(R.id.listview_contacts);
-            contactsAdapter = new ContactsAdapter(getActivity().getBaseContext(), R.id.listview_contacts, listContacts);
-            listView.setAdapter(contactsAdapter);
         }
         return view;
     }
