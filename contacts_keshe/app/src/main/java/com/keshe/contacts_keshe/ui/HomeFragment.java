@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.keshe.contacts_keshe.R;
 import com.keshe.contacts_keshe.adapter.ContactsAdapter;
@@ -105,7 +106,7 @@ public class HomeFragment extends Fragment {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-//                                Toast.makeText(getActivity().getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity().getBaseContext(), "上传成功", Toast.LENGTH_LONG).show();
                             }
 
                             @Override
@@ -114,11 +115,10 @@ public class HomeFragment extends Fragment {
                                 JSONObject jsonObject = null;
                                 try {
                                     jsonObject = new JSONObject(str);
-//                                    Toast.makeText(getActivity().getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity().getBaseContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-//                                Toast.makeText(getActivity().getBaseContext(), ".........", Toast.LENGTH_LONG).show();
                             }
                         });
                         // Close CAB

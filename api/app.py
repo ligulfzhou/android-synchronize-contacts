@@ -143,27 +143,31 @@ def get_contact():
         contacts = request.form.get('contacts')
         if not contacts:
             return make_response(jsonify({'upload contacts': 'failed'}))
-        contacts_former = Contact.query.filter_by(user=g.current_user).all()
-        contacts_dict = {}
-        for contact in contacts_former:
-            contacts_dict.update({contact.name: contact.number})
-        contacts_upload = contacts.split(';')
-        contacts_upload_dict = {}
-        for contact in contacts_upload:
-            name, number = contact.split(',')
-            contacts_upload_dict.update({name: number})
+        try:
+            contacts_former = Contact.query.filter_by(user=g.current_user).all()
+            logging.error(contacts_former)
+            contacts_dict = {}
+            for contact in contacts_former:
+                contacts_dict.update({contact.name: contact.number})
+            contacts_upload = contacts.split(';')
+            contacts_upload_dict = {}
+            for contact in contacts_upload:
+                name, number = contact.split(',')
+                contacts_upload_dict.update({name: number})
 
-        contacts_to_insert = []
-        for contact in contacts_upload_dict:
-            if contact in contacts_dict and contacts_upload_dict.get(contact) == contacts_dict.get(contact):
-                continue
-            else:
-                contacts_to_insert.append(Contact(name=contact, number=contacts_upload_dict.get(contact), user=g.current_user))
-
-        for contact in contacts_to_insert:
-            db.session.add(contact)
-        db.session.commit()
-        return make_response(jsonify({'upload': 'success'}))
+            contacts_to_insert = []
+            for contact in contacts_upload_dict:
+                if contact in contacts_dict and contacts_upload_dict.get(contact) == contacts_dict.get(contact):
+                    continue
+                else:
+                    contacts_to_insert.append(Contact(name=contact, number=contacts_upload_dict.get(contact), user=g.current_user))
+            logging.error(contacts_to_insert)
+            for contact in contacts_to_insert:
+                db.session.add(contact)
+            db.session.commit()
+            return make_response(jsonify({'upload': 'success'}))
+        except Exception as e:
+            logging.error(e)
 
 
 @app.route('/delete_contacts', methods=['POST'])
