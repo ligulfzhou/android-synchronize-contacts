@@ -8,7 +8,8 @@ import java.util.List;
 
 
 public class Api {
-    public final static String HOST = "192.168.0.106:8001/";
+//    public final static String HOST = "192.168.0.106:8001/";
+    public final static String HOST = "104.244.76.39:8001/";
     public final static String HTTP = "http://";
     public final static String BASE_URL = HTTP + HOST;
 

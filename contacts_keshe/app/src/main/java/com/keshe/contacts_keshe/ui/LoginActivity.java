@@ -80,12 +80,12 @@ public class LoginActivity extends Activity {
                                 e.printStackTrace();
                             }
 
-                            Toast.makeText(getBaseContext(), str, Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getBaseContext(), str, Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(getBaseContext(), "..........", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "登陆失败", Toast.LENGTH_LONG).show();
                         }
                     });
                 } else {

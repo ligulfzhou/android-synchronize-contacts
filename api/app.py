@@ -97,6 +97,9 @@ def register():
     if not username or not password:
         return make_response(jsonify({'register': 'failed'}))
     try:
+        user_exist = User.query.filter_by(mobile=mobile).first()
+        if user_exist:
+            return make_response(jsonify({'register': 'error, already exists'}))
         user = User(mobile=mobile, username=username, password=password)
         db.session.add(user)
         db.session.commit()
@@ -112,7 +115,7 @@ def change_password():
     if not password:
         return make_response(jsonify({'change_password': 'failed'}))
     try:
-        user = User.query.filter_by(username=g.current_user.username).first()
+        user = User.query.filter_by(mobile=g.current_user.mobile).first()
         user.password = password
         db.session.add(user)
         db.session.commit()
