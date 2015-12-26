@@ -42,6 +42,9 @@ class Contact(db.Model):
         if user:
             self.user = user
 
+    def __repr__(self):
+        return '<Contact: %s, %s >' % (self.name, self.number)
+
 
 @auth.verify_password
 def verify_passwd(mobile, password2):
@@ -142,7 +145,7 @@ def get_contact():
     else:
         contacts = request.form.get('contacts')
         if not contacts:
-            return make_response(jsonify({'upload contacts': 'failed'}))
+            return make_response(jsonify({'upload': 'failed'}))
         try:
             contacts_former = Contact.query.filter_by(user=g.current_user).all()
             logging.error(contacts_former)

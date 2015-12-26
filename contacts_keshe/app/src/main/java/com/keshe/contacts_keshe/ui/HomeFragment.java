@@ -96,6 +96,7 @@ public class HomeFragment extends Fragment {
                         }
 //                        Toast.makeText(getActivity().getBaseContext(), contacts.toString(), Toast.LENGTH_LONG).show();
                         String token = sharedPreference.getToken(getActivity().getBaseContext());
+                        Toast.makeText(getActivity().getBaseContext(), contacts.toString(), Toast.LENGTH_LONG).show();
                         Api.postContactList(contacts, token, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -103,10 +104,15 @@ public class HomeFragment extends Fragment {
                                 JSONObject jsonObject = null;
                                 try {
                                     jsonObject = new JSONObject(str);
+                                    String result = jsonObject.getString("upload");
+                                    if (result.equals("success")){
+                                        Toast.makeText(getActivity().getBaseContext(), "上传成功", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getActivity().getBaseContext(), "上传失败", Toast.LENGTH_LONG).show();
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                Toast.makeText(getActivity().getBaseContext(), "上传成功", Toast.LENGTH_LONG).show();
                             }
 
                             @Override

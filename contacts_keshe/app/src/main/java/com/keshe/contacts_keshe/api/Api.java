@@ -1,5 +1,7 @@
 package com.keshe.contacts_keshe.api;
 
+import android.util.Log;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -55,6 +57,7 @@ public class Api {
             contacts_str += ";" + contacts.get(i);
         }
         params.put("contacts", contacts_str);
+        Log.d("contacts", contacts_str);
         AsyncHttpClient client = AsyncHttpHelp.getHttpClient();
         client.addHeader("Authorization", "Basic " + token);
         client.post(CONTACTS, params, handler);
