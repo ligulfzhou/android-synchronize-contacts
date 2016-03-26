@@ -29,7 +29,6 @@ android客户端也能读取手机上的通讯录，用户可以选择其中的�
 ```
 
 #注册失败
-
 ```shell
 ➜  ~ curl -d mobile='18612345678' -d username='xxx' -d password='123456' -X POST http://localhost:8001/register
 {
@@ -38,7 +37,6 @@ android客户端也能读取手机上的通讯录，用户可以选择其中的�
 ```
 
 #登陆 (注意token字段)
-
 ```shell
 ➜  api git:(master) ✗ curl -d mobile='18612345678' -d password='123456' -X POST http://localhost:8001/login
 {
@@ -57,6 +55,7 @@ android客户端也能读取手机上的通讯录，用户可以选择其中的�
   "error": "Unauthorized access"  //报错
 }%
 ```
+
 #获取通讯录（带token）
 ```shell
 ➜  api git:(master) ✗ curl -H "Authorization: Basic MTg2MTIzNDU2Nzg6MTIzNDU2" -X GET http://localhost:8001/contacts
@@ -91,6 +90,7 @@ android客户端也能读取手机上的通讯录，用户可以选择其中的�
   ]
 }%
 ```
+
 #再次上传（带token）
 ```shell
 ➜  api git:(master) ✗ curl -H "Authorization: Basic MTg2MTIzNDU2Nzg6MTIzNDU2" -d contacts="Bob,1869897878;lily,18689878667" -X POST http://localhost:8001/contacts
@@ -98,6 +98,7 @@ android客户端也能读取手机上的通讯录，用户可以选择其中的�
   "upload": "success"
 }%
 ```
+
 #再次获取（带token）
 ```shell
 ➜  api git:(master) ✗ curl -H "Authorization: Basic MTg2MTIzNDU2Nzg6MTIzNDU2" -X GET http://localhost:8001/contacts
