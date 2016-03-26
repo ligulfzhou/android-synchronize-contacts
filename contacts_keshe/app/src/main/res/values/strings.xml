@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">contacts_keshe</string>
+    <string name="app_name">同步通讯录课程设计</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main2">Main2Activity</string>
 </resources>

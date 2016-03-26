@@ -94,10 +94,14 @@ public class HomeFragment extends Fragment {
                                 contacts.add(selecteditem.toString());
                             }
                         }
-//                        Toast.makeText(getActivity().getBaseContext(), contacts.toString(), Toast.LENGTH_LONG).show();
                         String token = sharedPreference.getToken(getActivity().getBaseContext());
-                        Toast.makeText(getActivity().getBaseContext(), contacts.toString(), Toast.LENGTH_LONG).show();
-                        Api.postContactList(contacts, token, new AsyncHttpResponseHandler() {
+
+                        String contacts_str = "";
+                        contacts_str += contacts.get(0);
+                        for(int i = 1; i < contacts.size(); i++){
+                            contacts_str += ";" + contacts.get(i);
+                        }
+                        Api.postContactList(contacts_str, token, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 String str = new String(responseBody);

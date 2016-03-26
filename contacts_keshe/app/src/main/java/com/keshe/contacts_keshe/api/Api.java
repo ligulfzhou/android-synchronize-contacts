@@ -49,15 +49,11 @@ public class Api {
         client.get(CONTACTS, handler);
     }
 
-    public static void postContactList(List<String> contacts, String token, AsyncHttpResponseHandler handler){
+    public static void postContactList(String contacts, String token, AsyncHttpResponseHandler handler){
         RequestParams params = new RequestParams();
-        String contacts_str = "";
-        contacts_str += contacts.get(0);
-        for(int i = 1; i < contacts.size(); i++){
-            contacts_str += ";" + contacts.get(i);
-        }
-        params.put("contacts", contacts_str);
-        Log.d("contacts", contacts_str);
+
+        params.put("contacts", contacts);
+        Log.d("contacts", contacts);
         AsyncHttpClient client = AsyncHttpHelp.getHttpClient();
         client.addHeader("Authorization", "Basic " + token);
         client.post(CONTACTS, params, handler);
